@@ -1,0 +1,3 @@
+include ':app', ':abstractionsAndUtils'
+include ":abstractionsAndUtils"
+project(":abstractionsAndUtils").projectDir = file("../abstractionsAndUtils")
