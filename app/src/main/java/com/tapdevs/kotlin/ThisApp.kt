@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import com.squareup.leakcanary.LeakCanary
 import com.tapdevs.abstractions.utils.CrashlyticsTree
+import com.tapdevs.kotlin.injections.modules.UsersModule
 import io.realm.Realm
 import timber.log.Timber
 

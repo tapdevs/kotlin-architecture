@@ -18,20 +18,20 @@ class RealmDataManager {
         initRealm()
     }
 
-//    fun saveUserObjects(objects: List<User>) {
-//
-//        realm!!.executeTransaction { realm1 -> realm!!.copyToRealmOrUpdate(objects) }
-//    }
-//
-//
-//    val allUsers: RealmResults<User>
-//        get() {
-//            if (realm != null && realm!!.isClosed) {
-//                realm = Realm.getDefaultInstance()
-//            }
-//            val results = realm!!.where(User::class.java).findAll()
-//            return results
-//        }
+    fun saveUserObjects(objects: List<User>) {
+
+        realm!!.executeTransaction { realm1 -> realm!!.copyToRealmOrUpdate(objects) }
+    }
+
+
+    val allUsers: RealmResults<User>
+        get() {
+            if (realm != null && realm!!.isClosed) {
+                realm = Realm.getDefaultInstance()
+            }
+            val results = realm!!.where(User::class.java).findAll()
+            return results
+        }
 
     fun initRealm() {
         realm = Realm.getDefaultInstance()

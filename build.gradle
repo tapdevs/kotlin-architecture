@@ -6,6 +6,7 @@ buildscript {
     ext.RETROFIT_VERSION = '2.3.0'
     ext.RXJAVA_VERSION = '2.0.1'
     ext.PLAY_SERVICES_VERSION = '10.2.6'
+    ext.DAGGER_VERSION = '2.10'
     ext.android_plugin_version = '2.3.2'
     repositories {
         jcenter()

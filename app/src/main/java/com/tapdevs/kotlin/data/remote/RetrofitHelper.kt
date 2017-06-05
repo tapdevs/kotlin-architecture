@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitHelper {
 
-    public val  serverUrl: String ="https://api.github.com/"
+    val  serverUrl: String ="https://api.github.com/"
 
     fun newApiCalls(): ApiCalls {
 

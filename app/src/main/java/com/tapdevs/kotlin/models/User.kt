@@ -11,7 +11,14 @@ import io.realm.annotations.PrimaryKey
  */
 
 
-class User {
+open class User : RealmObject , Parcelable{
+    override fun describeContents(): Int {
+        return 0;
+    }
+
+    override fun writeToParcel(p0: Parcel?, p1: Int) {
+
+    }
 
     var login: String? = null
     var avatar_url: String? = null

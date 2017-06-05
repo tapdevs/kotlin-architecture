@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout_offline"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:visibility="gone">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/layoutOffline"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:gravity="center"
+              android:orientation="vertical"
+              android:visibility="gone">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:textColor="@android:color/black"
-        android:id="@+id/tv_error"
+        android:id="@+id/errorView"
         android:text="@string/noInternet"/>
 
     <Button
@@ -22,7 +23,9 @@
         android:padding="12dp"
         android:background="@drawable/selector_button"
         android:clickable="true"
+        android:onClick="onTryAgainClick"
         android:enabled="true"
+        tools:ignore="OnClick"
         android:text="@string/try_again"
         android:textColor="@android:color/white" />
 
