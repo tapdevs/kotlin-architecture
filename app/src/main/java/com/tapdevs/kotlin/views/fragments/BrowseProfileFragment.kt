@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import com.tapdevs.abstractions.views.BaseFragment
 import com.tapdevs.kotlin.R
 import com.tapdevs.kotlin.data.AppConstants
+import com.tapdevs.kotlin.data.RealmDataManager
 import com.tapdevs.kotlin.models.User
 import kotlinx.android.synthetic.main.fragment_browse_profile.*
 
@@ -20,7 +21,7 @@ class BrowseProfileFragment : BaseFragment(){
 
     // TODO: Rename and change types of parameters
     var userObject: User? = null
-
+    val realm: RealmDataManager = RealmDataManager()
 
 
     /**
@@ -42,7 +43,7 @@ class BrowseProfileFragment : BaseFragment(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-            userObject = arguments?.getParcelable(AppConstants.USER_OBJECT_PARCELABLE_KEY)
+        userObject = arguments?.getParcelable(AppConstants.USER_OBJECT_PARCELABLE_KEY)
 
     }
 
@@ -52,6 +53,9 @@ class BrowseProfileFragment : BaseFragment(){
     }
 
     override fun initialize() {
+        if (realm.realm!!.isClosed()) {
+            realm.initRealm()
+        }
         webview?.loadUrl(userObject?.html_url)
         webview?.settings?.javaScriptEnabled = true
 

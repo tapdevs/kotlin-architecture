@@ -203,7 +203,7 @@ class UsersFragment : BaseFragment() , SwipeRefreshLayout.OnRefreshListener{
         args.putParcelable(AppConstants.USER_OBJECT_PARCELABLE_KEY, user)
         browseProfileFragment.setArguments(args)
 
-        (activity as MainActivity).addFragment(browseProfileFragment)
+        (activity as MainActivity).setFragment(browseProfileFragment)
     }
 
 }
