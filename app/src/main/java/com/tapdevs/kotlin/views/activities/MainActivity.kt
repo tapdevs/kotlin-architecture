@@ -25,7 +25,6 @@ class MainActivity : BaseActivity() {
     fun setFragment(fragment: Fragment) {
         supportFragmentManager
                 .beginTransaction()
-                .addToBackStack(fragment.javaClass.simpleName)
                 .replace(R.id.fragment_content, fragment, fragment.javaClass.simpleName)
                 .commit()
     }

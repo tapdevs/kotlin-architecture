@@ -17,6 +17,9 @@ import com.tapdevs.kotlin.data.AppConstants
 import com.tapdevs.kotlin.data.DataManager
 import com.tapdevs.kotlin.data.RealmDataManager
 import com.tapdevs.kotlin.data.remote.RetrofitHelper
+import com.tapdevs.kotlin.injections.components.DaggerAppComponent
+import com.tapdevs.kotlin.injections.components.DaggerUsersComponent
+import com.tapdevs.kotlin.injections.modules.UsersModule
 import com.tapdevs.kotlin.models.User
 import com.tapdevs.kotlin.views.activities.MainActivity
 import com.tapdevs.kotlin.views.adapters.UserAdapter
@@ -30,6 +33,7 @@ import kotlinx.android.synthetic.main.fragment_users.*
 import kotlinx.android.synthetic.main.layout_offline.*
 import timber.log.Timber
 import java.util.*
+import javax.inject.Inject
 
 /**
  * Created by  Jan Shair on 28/05/2017.
@@ -38,15 +42,15 @@ import java.util.*
 class UsersFragment : BaseFragment() , SwipeRefreshLayout.OnRefreshListener{
 
 
-    val mCompositeDisposable: CompositeDisposable = CompositeDisposable()
+    @Inject lateinit var mCompositeDisposable: CompositeDisposable
 
     lateinit var mAdapter: UserAdapter
 
     lateinit var users: ArrayList<User>
 
-    val mDataManager: DataManager = DataManager(RetrofitHelper().newApiCalls(), Schedulers.io())
+    @Inject lateinit var mDataManager: DataManager
 
-    val realm: RealmDataManager = RealmDataManager()
+    @Inject lateinit var realm: RealmDataManager
 
     override val fragmentLayout: Int
 
@@ -85,6 +89,8 @@ class UsersFragment : BaseFragment() , SwipeRefreshLayout.OnRefreshListener{
 
     override fun injectDependencies() {
 //        DIBinder.getUserComponent(activity.application)?.inject(this)
+        DaggerUsersComponent.builder().appComponent(DaggerAppComponent.create()).usersModule(UsersModule()).build().inject(this)
+
     }
 
     override fun onDestroy() {
@@ -106,10 +112,10 @@ class UsersFragment : BaseFragment() , SwipeRefreshLayout.OnRefreshListener{
 
     private fun setupRecyclerView() {
         recyclerView?.let {
-            recyclerView?.layoutManager = LinearLayoutManager(activity)
-            recyclerView?.setHasFixedSize(true)
+            recyclerView.layoutManager = LinearLayoutManager(activity)
+            recyclerView.setHasFixedSize(true)
             mAdapter?.setItems(users!!)
-            recyclerView?.adapter = mAdapter
+            recyclerView.adapter = mAdapter
         }
     }
 
