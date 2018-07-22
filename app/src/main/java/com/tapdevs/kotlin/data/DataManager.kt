@@ -2,7 +2,8 @@ package com.tapdevs.kotlin.data
 
 
 import com.tapdevs.kotlin.data.remote.ApiCalls
-import com.tapdevs.kotlin.models.User
+import com.tapdevs.kotlin.models.ContainerObject
+import io.reactivex.Observable
 
 
 import io.reactivex.Scheduler
@@ -22,8 +23,14 @@ class DataManager(
         scheduler = subscribeScheduler
     }
 
-    val userList: io.reactivex.Observable<List<User>>
-        get() = apiCalls.users
+
+    val fruitList: io.reactivex.Observable<ContainerObject>
+        get() = apiCalls.fruits
 
 
+    fun loadEvent() : Observable<String> =  apiCalls.loadEvent(System.currentTimeMillis())
+
+    fun displayEvent() : Observable<String> =  apiCalls.displayEvent(System.currentTimeMillis())
+
+    fun errorEvent(errorText : String)  : Observable<String> =  apiCalls.errorEvent(errorText)
 }

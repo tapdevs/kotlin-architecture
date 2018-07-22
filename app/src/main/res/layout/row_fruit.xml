@@ -1,55 +1,57 @@
 <layout
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/tools">
+    >
 
     <data>
-        <variable name="viewModel" type="com.tapdevs.kotlin.viewmodels.UserViewModel" />
+        <variable name="viewModel" type="com.tapdevs.kotlin.viewmodels.FruitsViewModel" />
+        <variable name="fruit" type="com.tapdevs.kotlin.models.Fruit" />
     </data>
+
 
 <android.support.v7.widget.CardView
 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:id="@+id/container_item"
+    android:id="@+id/containerItem"
     android:layout_marginTop="5dp"
-    android:onClick="@{viewModel::onClickView}"
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
     card_view:cardCornerRadius="5dp">
 
     <RelativeLayout android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-        <ImageView android:layout_width="@dimen/image_width"
-                   android:layout_margin="@dimen/activity_horizontal_margin"
-                   android:id="@+id/iv_avatar"
-                   app:imageUrl="@{viewModel.user.avatar_url}"
-                   android:layout_height="@dimen/image_width"/>
+        android:layout_height="match_parent">
+        <!--<ImageView android:layout_width="@dimen/image_width"-->
+                   <!--android:layout_margin="@dimen/activity_horizontal_margin"-->
+                   <!--android:id="@+id/iv_avatar"-->
+                   <!--app:imageUrl="@{viewModel.user.avatar_url}"-->
+                   <!--android:layout_height="@dimen/image_width"/>-->
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/iv_avatar"
         android:layout_margin="10dp"
-        android:layout_toRightOf="@id/iv_avatar"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_name"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:textSize="18sp"
             android:layout_width="wrap_content"
             android:textColor="@android:color/black"
-            android:text="@{viewModel.user.login}"
+            android:text="@{fruit.type}"
             android:layout_height="wrap_content"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tv_url"
             android:layout_width="wrap_content"
             android:textColor="@android:color/black"
-            android:text="@{viewModel.user.html_url}"
+            android:text="@{viewModel.getPrice(fruit)}"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:textColor="@android:color/black"
+            android:text="@{viewModel.getWeight(fruit)}"
             android:layout_height="wrap_content" />
 
 

@@ -6,27 +6,27 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.tapdevs.kotlin.R
-import com.tapdevs.kotlin.databinding.UserRowBinding
-import com.tapdevs.kotlin.models.User
-import com.tapdevs.kotlin.viewmodels.UserViewModel
-import com.tapdevs.kotlin.views.fragments.UsersFragment
+import com.tapdevs.kotlin.databinding.RowFruitBinding
+import com.tapdevs.kotlin.models.Fruit
+import com.tapdevs.kotlin.viewmodels.FruitsViewModel
+import com.tapdevs.kotlin.views.fragments.FruitsFragment
 
 /**
  * Created by  Jan Shair on 29/05/2017.
  */
 
-class UserAdapter(private val context: UsersFragment, private var userArrayList: List<User>?) : RecyclerView.Adapter<UserAdapter.BindingHolder>() {
+class UserAdapter(private val context: FruitsFragment, private var userArrayList: List<Fruit>?) : RecyclerView.Adapter<UserAdapter.BindingHolder>() {
 
-    fun setItems(posts: List<User>) {
+    fun setItems(posts: List<Fruit>) {
         userArrayList = posts
         notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindingHolder {
 
-        val commentBinding : UserRowBinding = DataBindingUtil.inflate(
+        val commentBinding : RowFruitBinding = DataBindingUtil.inflate(
                 LayoutInflater.from(parent.context),
-                R.layout.user_row,
+                R.layout.row_fruit,
                 parent,
                 false)
         return BindingHolder(commentBinding)
@@ -35,15 +35,16 @@ class UserAdapter(private val context: UsersFragment, private var userArrayList:
     override fun onBindViewHolder(holder: BindingHolder, position: Int) {
 
         val user = userArrayList!![position]
-        val commentsHeaderBinding = holder.binding as UserRowBinding
-        commentsHeaderBinding.setViewModel(UserViewModel(context, user))
+        val commentsHeaderBinding = holder.binding as RowFruitBinding
+        commentsHeaderBinding.fruit = user
+        commentsHeaderBinding.viewModel = FruitsViewModel(context)
     }
 
     override fun getItemCount(): Int {
         return userArrayList!!.size
     }
 
-    inner class BindingHolder(binding: UserRowBinding) : RecyclerView.ViewHolder(binding.containerItem) {
+    inner class BindingHolder(binding: RowFruitBinding) : RecyclerView.ViewHolder(binding.containerItem) {
 
         val binding: ViewDataBinding
 

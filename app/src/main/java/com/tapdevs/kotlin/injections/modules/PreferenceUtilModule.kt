@@ -1,7 +1,7 @@
 package com.tapdevs.kotlin.injections.modules
 
 import com.tapdevs.abstractions.utils.SharedPreferenceUtil
-import com.tapdevs.kotlin.views.fragments.UsersFragment
+import com.tapdevs.kotlin.views.fragments.FruitsFragment
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -15,5 +15,5 @@ class PreferenceUtilModule {
 
     @Provides
     @Singleton
-    fun providesSharedPreferences(application: UsersFragment):SharedPreferenceUtil = SharedPreferenceUtil(application.activity.application)
+    fun providesSharedPreferences(application: FruitsFragment):SharedPreferenceUtil = SharedPreferenceUtil(application.activity!!.application)
 }

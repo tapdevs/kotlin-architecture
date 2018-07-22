@@ -6,25 +6,24 @@ import com.tapdevs.kotlin.data.RealmDataManager
 import com.tapdevs.kotlin.data.remote.ApiCalls
 import com.tapdevs.kotlin.data.remote.RetrofitHelper
 import com.tapdevs.kotlin.injections.scope.ActivityScope
-import com.tapdevs.kotlin.views.fragments.UsersFragment
+import com.tapdevs.kotlin.views.fragments.FruitsFragment
 import dagger.Module
 import dagger.Provides
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import javax.inject.Singleton
 
 /**
  * Created by  Jan Shair on 28/05/2017.
  */
 //
 @Module
-class UsersModule
+class FruitsModule
  {
 //
     @Provides
     @ActivityScope
-    fun providesSharedPreferences(application: UsersFragment): SharedPreferenceUtil = SharedPreferenceUtil(application.activity.application)
+    fun providesSharedPreferences(application: FruitsFragment): SharedPreferenceUtil = SharedPreferenceUtil(application.activity!!.application)
 
     @Provides
     @ActivityScope

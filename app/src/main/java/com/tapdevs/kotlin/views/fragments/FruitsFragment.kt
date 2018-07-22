@@ -7,29 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.tapdevs.abstractions.eventHandlers.NetworkStatus
-import com.tapdevs.abstractions.utils.AbstractionOrUtilsConstants
-import com.tapdevs.abstractions.utils.DialogFactory
+import com.tapdevs.abstractions.utils.NetworkUtils
 import com.tapdevs.abstractions.views.BaseFragment
 import com.tapdevs.kotlin.R
-import com.tapdevs.kotlin.R.id.*
-import com.tapdevs.kotlin.R.layout.fragment_users
+import com.tapdevs.kotlin.R.layout.fragment_fruits
 import com.tapdevs.kotlin.data.AppConstants
 import com.tapdevs.kotlin.data.DataManager
 import com.tapdevs.kotlin.data.RealmDataManager
-import com.tapdevs.kotlin.data.remote.RetrofitHelper
 import com.tapdevs.kotlin.injections.components.DaggerAppComponent
-import com.tapdevs.kotlin.injections.components.DaggerUsersComponent
-import com.tapdevs.kotlin.injections.modules.UsersModule
-import com.tapdevs.kotlin.models.User
+import com.tapdevs.kotlin.injections.components.DaggerFruitsComponent
+import com.tapdevs.kotlin.injections.modules.FruitsModule
+import com.tapdevs.kotlin.models.ContainerObject
+import com.tapdevs.kotlin.models.Fruit
 import com.tapdevs.kotlin.views.activities.MainActivity
 import com.tapdevs.kotlin.views.adapters.UserAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.internal.util.HalfSerializer.onComplete
-import io.reactivex.internal.util.HalfSerializer.onNext
-import io.reactivex.schedulers.Schedulers
 import io.realm.RealmResults
-import kotlinx.android.synthetic.main.fragment_users.*
+import kotlinx.android.synthetic.main.fragment_fruits.*
 import kotlinx.android.synthetic.main.layout_offline.*
 import timber.log.Timber
 import java.util.*
@@ -39,14 +34,14 @@ import javax.inject.Inject
  * Created by  Jan Shair on 28/05/2017.
  */
 
-class UsersFragment : BaseFragment() , SwipeRefreshLayout.OnRefreshListener{
+class FruitsFragment : BaseFragment() , SwipeRefreshLayout.OnRefreshListener{
 
 
     @Inject lateinit var mCompositeDisposable: CompositeDisposable
 
     lateinit var mAdapter: UserAdapter
 
-    lateinit var users: ArrayList<User>
+    lateinit var fruits: ArrayList<Fruit>
 
     @Inject lateinit var mDataManager: DataManager
 
@@ -54,12 +49,12 @@ class UsersFragment : BaseFragment() , SwipeRefreshLayout.OnRefreshListener{
 
     override val fragmentLayout: Int
 
-        get() = fragment_users
+        get() = fragment_fruits
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        users = ArrayList<User>()
-        mAdapter = UserAdapter(this, users)
+        fruits = ArrayList<Fruit>()
+        mAdapter = UserAdapter(this, fruits)
     }
 
 
@@ -89,7 +84,7 @@ class UsersFragment : BaseFragment() , SwipeRefreshLayout.OnRefreshListener{
 
     override fun injectDependencies() {
 //        DIBinder.getUserComponent(activity.application)?.inject(this)
-        DaggerUsersComponent.builder().appComponent(DaggerAppComponent.create()).usersModule(UsersModule()).build().inject(this)
+        DaggerFruitsComponent.builder().appComponent(DaggerAppComponent.create()).fruitsModule(FruitsModule()).build().inject(this)
 
     }
 
@@ -100,7 +95,7 @@ class UsersFragment : BaseFragment() , SwipeRefreshLayout.OnRefreshListener{
 
     override fun onRefresh() {
         mCompositeDisposable.clear()
-        mAdapter?.let { mAdapter.setItems(ArrayList<User>()) }
+        mAdapter?.let { mAdapter.setItems(ArrayList<Fruit>()) }
 
         loadUsersIfNetworkConnected()
     }
@@ -114,35 +109,43 @@ class UsersFragment : BaseFragment() , SwipeRefreshLayout.OnRefreshListener{
         recyclerView?.let {
             recyclerView.layoutManager = LinearLayoutManager(activity)
             recyclerView.setHasFixedSize(true)
-            mAdapter?.setItems(users!!)
+            mAdapter.setItems(fruits)
             recyclerView.adapter = mAdapter
         }
     }
 
 
-    fun onNext(value: List<User>) {
+
+
+    fun onFruitsReceived(value: ContainerObject) {
         showHideOfflineLayout(false)
         hideLoadingViews()
-        realm?.saveUserObjects(value)
-        handleResponse(realm?.allUsers)
 
+        if(value.fruit.size > 0){
+            realm.saveFruitsObjects(value.fruit)
+            handleResponse(realm.fruits)
 
+            mCompositeDisposable.add(mDataManager.displayEvent()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(mDataManager.scheduler)
+                    .subscribe(this::loadResponse,this::errorEvent,this::onComplete))
+        }
     }
 
     override fun onDetach() {
         super.onDetach()
-        realm?.realm?.close()
+        realm.realm?.close()
     }
 
     fun onError(e: Throwable) {
         handleError(e)
         hideLoadingViews()
-        Timber.e("There was a problem loading users " + e)
+        Timber.e("There was a problem loading fruits " + e)
         e.printStackTrace()
-        DialogFactory.createSimpleOkErrorDialog(
-                context,
-                "There was a problem loading users " + e
-        ).show()
+//        DialogFactory(context!!).createSimpleOkErrorDialog(
+//                context,
+//                "There was a problem loading fruits " + e
+//        ).show()
     }
 
     fun onComplete() {
@@ -154,17 +157,23 @@ class UsersFragment : BaseFragment() , SwipeRefreshLayout.OnRefreshListener{
 
     private fun loadUsersIfNetworkConnected() {
 
-        if (AbstractionOrUtilsConstants.networkStatus != NetworkStatus.networkStatusNotReachable) {
+        if (NetworkStatus.networkStatusNotReachable != NetworkUtils.getReachability(context!!)) {
 
 
-            mCompositeDisposable?.add(mDataManager!!.userList
+            mCompositeDisposable.add(mDataManager.fruitList
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(mDataManager!!.scheduler)
-                    .subscribe(this::onNext,this::onError,this::onComplete))
+                    .subscribeOn(mDataManager.scheduler)
+                    .subscribe(this::onFruitsReceived,this::onError,this::onComplete))
+
+
+            mCompositeDisposable.add(mDataManager.loadEvent()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(mDataManager.scheduler)
+                    .subscribe(this::loadResponse,this::errorEvent,this::onComplete))
         } else {
-            val allOfflineUsers = realm?.allUsers
-            if (allOfflineUsers!!.size!! > 0) {
-                handleResponse(realm?.allUsers)
+            val allFruits = realm.fruits
+            if (allFruits.size > 0) {
+                handleResponse(realm.fruits)
             } else {
                 showError(getString(R.string.noInternet))
             }
@@ -172,19 +181,31 @@ class UsersFragment : BaseFragment() , SwipeRefreshLayout.OnRefreshListener{
         }
     }
 
-    private fun handleResponse(androidList: RealmResults<User>?) {
+    fun loadResponse(value : String){
+
+    }
+
+    private fun handleResponse(androidList: RealmResults<Fruit>?) {
         hideLoadingViews()
-        users = ArrayList<User>(androidList)
-        mAdapter = UserAdapter(this, users)
+        fruits = ArrayList<Fruit>(androidList)
+        mAdapter = UserAdapter(this, fruits)
         recyclerView?.adapter = mAdapter
     }
 
     private fun handleError(error: Throwable) {
 
+
+        mCompositeDisposable.add(mDataManager.errorEvent(error.localizedMessage.replace(" ","%20"))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(mDataManager.scheduler)
+                .subscribe(this::loadResponse,this::errorEvent,this::onComplete))
         showError("Error " + error.localizedMessage)
     }
 
 
+    private fun errorEvent(error: Throwable) {
+        Timber.d(error.message)
+    }
     private fun hideLoadingViews() {
         progressIndicator?.visibility = View.GONE
         swipeContainer?.isRefreshing = false
@@ -203,14 +224,6 @@ class UsersFragment : BaseFragment() , SwipeRefreshLayout.OnRefreshListener{
     }
 
 
-    fun browseThisUser(user: User) {
-        val browseProfileFragment = BrowseProfileFragment()
-        val args = Bundle()
-        args.putParcelable(AppConstants.USER_OBJECT_PARCELABLE_KEY, user)
-        browseProfileFragment.setArguments(args)
-
-        (activity as MainActivity).setFragment(browseProfileFragment)
-    }
 
 }
 

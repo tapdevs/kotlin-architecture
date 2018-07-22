@@ -12,8 +12,8 @@ import com.tapdevs.kotlin.injections.components.DaggerAppComponent
 
 object DIBinder {
 
-//    fun getUserComponent(): UsersComponent? {
-//        val usersComponent = DaggerUsersComponent.builder.usersModule(UsersModule()).build()
+//    fun getUserComponent(): FruitsComponent? {
+//        val usersComponent = DaggerFruitsComponent.builder.usersModule(FruitsModule()).build()
 //        return usersComponent
 //    }
     fun getAppComponent(application: Application): AppComponent? {
